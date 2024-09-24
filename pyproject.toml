@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "beangulp_importers"
+version = "0.0.1"
+license = { file = "LICENSE" }
+description = "A small example package"
+readme = "README.md"
+authors = [
+    { name="Justin Dubois", email="jpgdubois@protonmail.com" },
+]
+maintainers = [
+    { name="Justin Dubois", email="jpgdubois@protonmail.com" },
+]
+keywords = ["accounting", "beancount", "importer", "import"]
+requires-python = ">=3.8"
+classifiers = [
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Topic :: Office/Business :: Financial :: Accounting',
+    'Topic :: Text Processing :: General',
+]
+dependencies = [
+    'beancount >=2.3.5',
+]
