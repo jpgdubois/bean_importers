@@ -28,5 +28,6 @@ classifiers = [
     'Topic :: Text Processing :: General',
 ]
 dependencies = [
-    'beancount >=2.3.5',
+    'beancount >=3.0.0',
+    'beangulp >=0.1.1',
 ]
