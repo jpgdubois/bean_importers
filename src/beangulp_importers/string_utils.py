@@ -1,9 +1,8 @@
-from enum import Enum
 import re
 from decimal import Decimal
 from os import path
 from datetime import datetime
-from typing import Optional, Union, Tuple
+from typing import Optional
 from beangulp_importers.datatypes import Currency
 
 def convert_text_to_currency(text: str) -> Currency:

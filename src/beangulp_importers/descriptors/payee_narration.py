@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Protocol, Mapping, Tuple, Optional
+from typing import Mapping, Tuple, Optional
 from beangulp_importers.string_utils import shorten_text, clean_text, reduce_whitespace
 
 def _require_keys(text_entry: Mapping[str, str], *keys: str) -> None:

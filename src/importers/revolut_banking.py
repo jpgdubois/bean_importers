@@ -73,10 +73,16 @@ class RevolutImporter(BankingImporter):
         )
 
 if __name__ == "__main__":
-    main = beangulp.Ingest([RevolutImporter(
-        root_account="Assets:Revolut:EUR",
-        fee_account="Expenses:Revolut:Fee",
-        currency=Currency.EUR,
-    ),
+    main = beangulp.Ingest([
+        RevolutImporter(
+            root_account="Assets:Revolut:EUR",
+            fee_account="Expenses:Revolut:Fee",
+            currency=Currency.EUR,
+        ),
+        RevolutImporter(
+            root_account="Assets:Revolut:CHF",
+            fee_account="Expenses:Revolut:Fee",
+            currency=Currency.CHF,
+        ),
     ])
     main()
