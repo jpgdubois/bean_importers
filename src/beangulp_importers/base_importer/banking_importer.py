@@ -64,17 +64,22 @@ class BankingImporter(beangulp.Importer):
             # TODO: Implement extracting flags from table
 
             meta = data.new_metadata(filepath, lineno)
-            date = self.get_date(row)[0]
+            date = self.get_date(row)
             payee, narration = self.get_payee_narration(row)
             amount = self.get_root_amount(row)
-            fee = self.get_fee_amount(row)
             transaction_type = self.get_transaction_type(row)
+
+            if not date:
+                continue
 
             # Create a transaction.
             postings = [
                 data.Posting(default_account, amount, None, None, None, None),
-                data.Posting(self.fee_account, fee, None, None, None, None),
             ]
+            if self.get_fee_amount and self.fee_account:
+                fee = self.get_fee_amount(row)
+                data.Posting(self.fee_account, fee, None, None, None, None),
+
             txn = data.Transaction(
                 meta,
                 date,
@@ -89,13 +94,13 @@ class BankingImporter(beangulp.Importer):
             # Add the transaction to the output list.
             entries.append(txn)
 
-            # DO not add a balance check if balance is not available
+            # Do not add a balance check if balance is not available
             if not self.get_balance:
                 continue
 
             # Add balance to balances list.
             balance = self.get_balance(row)
-            if balance is not None:
+            if balance:
                 date = date + datetime.timedelta(days=1)
                 amount = balance
                 # meta = data.new_metadata(filepath, lineno)
@@ -106,6 +111,7 @@ class BankingImporter(beangulp.Importer):
 
         # Append balances.
         for currency, balances in balances.items():
-            entries.append(max(balances, key=lambda x: x.date))
+            # Assume last balance is the latest one
+            entries.append(balances[-1])
 
         return entries

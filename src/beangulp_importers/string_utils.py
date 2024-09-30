@@ -135,7 +135,7 @@ def extract_date_from_filename(filepath: str, regex: str, date_format: str = "%Y
         raise ValueError(f"No match found for the regex '{regex}' in filename '{filename}'.")
 
     # Extract the date string from the match group
-    date_str = match.group(1)
+    date_str = match.group("date")
 
     # Attempt to parse the date string
     try:

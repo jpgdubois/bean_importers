@@ -78,5 +78,5 @@ class FromNarration:
         """
         _require_keys(text_entry, self.narration_key)
 
-        narration_value = shorten_text(reduce_whitespace(clean_text(text_entry[self.narration_key]), self.max_narration_length))
+        narration_value = shorten_text(reduce_whitespace(clean_text(text_entry[self.narration_key])), self.max_narration_length)
         return None, narration_value

@@ -1,12 +1,13 @@
 from typing import  Optional
 import re
+import os
 from petl.util.base import DictsView
 from os import path
 from datetime import datetime
 from dataclasses import dataclass
 from typing import Iterable, Mapping
 
-from beangulp_importers.string_utils import match_filepath_date, match_filepath_extension, match_filepath_pattern, extract_date_from_filename
+from beangulp_importers.string_utils import match_filepath_date, match_filepath_extension, match_filepath_pattern, extract_date_from_filename, clean_text
 from beangulp_importers.file_utils import match_csv_header, match_csv_entry, match_xlsx_header, match_xlsx_entry, read_csv_table, read_xlsx_table
    
 
@@ -28,6 +29,7 @@ class FileDescriptionCSV:
     file_extension: str = '.csv'
     file_pattern_regex: str
     file_date_format: str = "%Y-%m-%d"
+    file_delimiter: str = ","
     file_header: Iterable[str]
     entry_mapping: Optional[Mapping[str, str]] = None
     start_date: Optional[datetime.date] = None
@@ -63,7 +65,7 @@ class FileDescriptionCSV:
             return False
         
         # Starting deep identification by reading the actual file
-        if not match_csv_header(filepath, self.file_header):
+        if not match_csv_header(filepath, self.file_header, delimiter=self.file_delimiter):
             return False
         
         if self.entry_mapping and not match_csv_entry(filepath, self.entry_mapping):
@@ -87,10 +89,13 @@ class FileDescriptionCSV:
         return extract_date_from_filename(filepath, self.file_pattern_regex, self.file_date_format)
     
     def name(self, filepath: str) -> str:
-        return filepath.replace(' ', '_')
+        # Remove special characters and replace spaces with underscores
+        filename = os.path.basename(filepath)
+        filename = re.sub(r'[^a-zA-Z0-9\.]', '_', filename)
+        return filename
     
     def read(self, filepath: str) -> DictsView:
-        return read_csv_table(filepath)
+        return read_csv_table(filepath, delimiter = self.file_delimiter)
 
 
 @dataclass(kw_only=True, frozen=True)

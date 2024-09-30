@@ -25,10 +25,10 @@ class AmountIdentifier(Protocol):
 
 class DateIdentifier(Protocol):
     """
-    Protocol for any callable that can identify and return dates 
+    Protocol for any callable that can identify and return the date
     from a text entry.
     """
-    def __call__(self, text_entry: Mapping[str, str]) -> Tuple[datetime.date, datetime.date]:
+    def __call__(self, text_entry: Mapping[str, str]) -> Optional[datetime.date]:
         ...
 
 

@@ -2,7 +2,7 @@ import petl as etl
 from petl.util.base import DictsView
 from typing import Tuple, Iterable, Optional, Mapping
 
-def read_csv_table(filepath: str, header_rows: int = 0, footer_rows: int = 0, row: Optional[int] = None) -> DictsView:
+def read_csv_table(filepath: str, header_rows: int = 0, footer_rows: int = 0, row: Optional[int] = None, delimiter: str = ",") -> DictsView:
     """
     Read a CSV file, skipping a specified number of header and footer rows.
 
@@ -13,7 +13,7 @@ def read_csv_table(filepath: str, header_rows: int = 0, footer_rows: int = 0, ro
     :return: petl table with header and footer rows skipped, or a single row as a dictionary if row is specified.
     """
     # Load the CSV file
-    table = etl.fromcsv(filepath)
+    table = etl.fromcsv(filepath, delimiter = delimiter)
     
     # Skip header and footer
     table = etl.skip(table, header_rows)  # Skip header rows
@@ -27,7 +27,7 @@ def read_csv_table(filepath: str, header_rows: int = 0, footer_rows: int = 0, ro
     return etl.dicts(table)  # Return the entire table as a dictionary view
 
 
-def read_csv_header(filepath: str, header_rows: int = 0) -> Tuple[str]:
+def read_csv_header(filepath: str, header_rows: int = 0, delimiter: str = ",") -> Tuple[str]:
     """
     Reads the header of a CSV file using petl, skipping the specified number of rows.
     
@@ -39,14 +39,14 @@ def read_csv_header(filepath: str, header_rows: int = 0) -> Tuple[str]:
         list: A list of strings representing the column headers.
     """
     # Use petl to skip rows and retrieve the header
-    table = etl.skip(etl.fromcsv(filepath), header_rows)
+    table = etl.skip(etl.fromcsv(filepath, delimiter=delimiter), header_rows)
     header = table.header()
 
     return header
 
 
-def match_csv_header(filepath: str, header: Iterable[str], header_rows: int = 0) -> bool:
-    target_header = read_csv_header(filepath, header_rows)
+def match_csv_header(filepath: str, header: Iterable[str], header_rows: int = 0, delimiter: str = ",") -> bool:
+    target_header = read_csv_header(filepath, header_rows, delimiter=delimiter)
     return target_header == tuple(header)
 
 

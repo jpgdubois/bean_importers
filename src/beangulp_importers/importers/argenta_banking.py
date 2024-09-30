@@ -16,11 +16,11 @@ class ArgentaImporter(BankingImporter):
     def __init__(
         self,
         root_account: str,
+        root_account_id: str,
     ):
-        
         file_description = file.FileDescriptionXLSX(
             file_extension = ".xlsx",
-            file_pattern_regex = r"^Argenta_BE\d{14}_(\d{4}-\d{2}-\d{2})_\d{6}\.xlsx$",
+            file_pattern_regex = rf"^Argenta_({root_account_id})_(?P<date>\d{{4}}-\d{{2}}-\d{{2}})_\d{{6}}\.xlsx$",
             file_date_format = "%Y-%m-%d",
             file_header = ("Rekening", "Boekdatum", "Valutadatum", "Referentie", "Beschrijving", "Bedrag", "Munt", "Verrichtingsdatum", "Rekening tegenpartij", "Naam tegenpartij", "Mededeling"),
             entry_mapping=None,
@@ -64,6 +64,7 @@ class ArgentaImporter(BankingImporter):
 if __name__ == "__main__":
     main = beangulp.Ingest([ArgentaImporter(
         root_account="Assets:BE:Argenta",
+        root_account_id="BE00000000000000",
     ),
     ])
     main()

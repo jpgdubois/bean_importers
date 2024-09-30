@@ -23,23 +23,24 @@ class RevolutImporter(BankingImporter):
 
         file_description = file.FileDescriptionCSV(
             file_extension = ".csv",
-            file_pattern_regex = r"^account-statement_(\d{4}-\d{2}-\d{2})_\d{4}-\d{2}-\d{2}_en_.*\.csv$",
+            file_pattern_regex = r"^account-statement_(?P<date>\d{4}-\d{2}-\d{2})_\d{4}-\d{2}-\d{2}_(en(-gb)?)_.*\.csv$",
             file_date_format = "%Y-%m-%d",
+            file_delimiter=",",
             file_header = ("Type", "Product", "Started Date", "Completed Date", "Description", "Amount", "Fee", "Currency", "State", "Balance"),
             entry_mapping={'Currency': currency.value},
             start_date = None,
             end_date = None,
         )
-        get_date = date.FromPostingTransactionDate(
-            posting_date="Completed Date",
-            transaction_date="Started Date",
+        get_date = date.FromDate(
+            date="Completed Date",
             date_format="%Y-%m-%d %H:%M:%S",
+            empty_date="",
         )
         get_transaction_type = transaction_type.FromTransactionType(
             transaction_type_key="Type",
             transaction_type_mapping={
                 TransactionType.exchange: ["EXCHANGE"],
-                TransactionType.transfer: ["TOPUP"],
+                TransactionType.transfer: ["TOPUP", "CARD_PAYMENT", "TRANSFER"],
                 TransactionType.skip: [],
             },
         )
