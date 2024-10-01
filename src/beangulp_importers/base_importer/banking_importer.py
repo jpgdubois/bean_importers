@@ -68,9 +68,9 @@ class BankingImporter(beangulp.Importer):
             payee, narration = self.get_payee_narration(row)
             amount = self.get_root_amount(row)
             transaction_type = self.get_transaction_type(row)
-
             if not date:
                 continue
+            
 
             # Create a transaction.
             postings = [

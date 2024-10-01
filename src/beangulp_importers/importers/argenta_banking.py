@@ -27,15 +27,14 @@ class ArgentaImporter(BankingImporter):
             start_date = None,
             end_date = None,
         )
-        get_date = date.FromPostingTransactionDate(
-            posting_date="Boekdatum",
-            transaction_date="Valutadatum",
-            date_format="%d-%m-%Y",
+        get_date = date.FromDate(
+            date="Verrichtingsdatum",
+            date_format="%Y-%m-%d %H:%M:%S",
         )
         get_transaction_type = transaction_type.FromTransactionType(
             transaction_type_key="Beschrijving",
             transaction_type_mapping={
-                TransactionType.transfer: ["Diverse verrichting", "Inkomende overschrijving", "Betaling bancontact"],
+                TransactionType.transfer: ["Diverse verrichting", "Inkomende overschrijving", "Betaling bancontact", "Uitgaande overschrijving"],
                 TransactionType.skip: [],
             },
         )

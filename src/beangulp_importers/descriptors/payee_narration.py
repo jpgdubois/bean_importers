@@ -37,8 +37,16 @@ class FromPayeeNarration:
         """
         _require_keys(text_entry, self.payee_key, self.narration_key)
 
-        payee_value = shorten_text(reduce_whitespace(clean_text(text_entry[self.payee_key]), self.max_payee_length))
-        narration_value = shorten_text(reduce_whitespace(clean_text(text_entry[self.narration_key]), self.max_narration_length))
+        payee_text = text_entry[self.payee_key]
+        if payee_text is None:
+            payee_text = ""
+
+        narration_text = text_entry[self.narration_key]
+        if narration_text is None:
+            narration_text = ""
+
+        payee_value = shorten_text(reduce_whitespace(clean_text(payee_text)), self.max_payee_length)
+        narration_value = shorten_text(reduce_whitespace(clean_text(narration_text)), self.max_narration_length)
         return payee_value, narration_value
 
 @dataclass(kw_only=True, frozen=True)

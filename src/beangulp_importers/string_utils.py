@@ -1,8 +1,8 @@
 import re
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_EVEN
 from os import path
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from beangulp_importers.datatypes import Currency
 
 def convert_text_to_currency(text: str) -> Currency:
@@ -45,6 +45,10 @@ def convert_text_to_decimal(text: str) -> Decimal:
     Raises:
         ValueError: If the input string cannot be converted to a decimal.
     """
+
+    if isinstance(text, Union[float, int]):
+        return Decimal(text).quantize(Decimal('.01'), rounding=ROUND_HALF_EVEN)
+    
     # Strip whitespace from the input
     text = text.strip()
 
@@ -70,7 +74,7 @@ def convert_text_to_decimal(text: str) -> Decimal:
 
     try:
         # Convert the cleaned string to float
-        return Decimal(number)
+        return Decimal(number).quantize(Decimal('.01'), rounding=ROUND_HALF_EVEN)
     except ValueError:
         raise ValueError(f"Cannot convert '{number}' to Decimal.")
 

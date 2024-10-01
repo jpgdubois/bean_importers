@@ -46,6 +46,10 @@ class FromDate:
         
         date = text_entry[self.date]
 
+        # when reading xlsx files sometimes a datetime object is returned
+        if isinstance(date, datetime):
+            return date.date()
+
         # Check if date entry is empty
         if date == self.empty_date:
             return None
