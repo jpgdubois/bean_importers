@@ -175,7 +175,10 @@ class FileDescriptionXLSX:
         return extract_date_from_filename(filepath, self.file_pattern_regex, self.file_date_format)
     
     def name(self, filepath: str) -> str:
-        return filepath.replace(' ', '_')
+        # Remove special characters and replace spaces with underscores
+        filename = os.path.basename(filepath)
+        filename = re.sub(r'[^a-zA-Z0-9\.]', '_', filename)
+        return filename
     
     def read(self, filepath: str) -> DictsView:
         return read_xlsx_table(filepath)

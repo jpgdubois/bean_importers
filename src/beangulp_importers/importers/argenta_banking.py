@@ -28,7 +28,7 @@ class ArgentaImporter(BankingImporter):
             end_date = None,
         )
         get_date = date.FromDate(
-            date="Verrichtingsdatum",
+            date="Valutadatum",
             date_format="%Y-%m-%d %H:%M:%S",
         )
         get_transaction_type = transaction_type.FromTransactionType(
@@ -40,7 +40,7 @@ class ArgentaImporter(BankingImporter):
         )
         get_payee_narration = payee_narration.FromPayeeNarration(
             payee_key="Naam tegenpartij",
-            max_payee_length=20,
+            max_payee_length=40,
             narration_key="Mededeling",
             max_narration_length=40,
         )
