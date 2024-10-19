@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "beangulp_importers"
+version = "0.0.1"
+authors = [
+    { name="Justin Dubois", email="jpgdubois@protonmail.com" },
+]
+description = "A small example package"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+
+license = { file = "LICENSE" }
+
+maintainers = [
+    { name="Justin Dubois", email="jpgdubois@protonmail.com" },
+]
+keywords = ["accounting", "beancount", "importer", "import"]
+
+dependencies = [
+    'beancount >=3.0.0',
+    'beangulp >=0.1.1',
+]

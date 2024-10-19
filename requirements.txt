@@ -1,0 +1,14 @@
+beancount==3.0.0
+beangulp==0.1.1
+beautifulsoup4==4.12.3
+chardet==5.2.0
+click==8.1.7
+et-xmlfile==1.1.0
+lxml==5.3.0
+openpyxl==3.1.5
+petl==1.7.15
+python-dateutil==2.9.0.post0
+python-magic==0.4.27
+regex==2024.9.11
+six==1.16.0
+soupsieve==2.6
