@@ -23,7 +23,7 @@ class RevolutImporter(BankingImporter):
 
         file_description = file.FileDescriptionCSV(
             file_extension = ".csv",
-            file_pattern_regex = r"^account-statement_(?P<date>\d{4}-\d{2}-\d{2})_\d{4}-\d{2}-\d{2}_(en(-gb)?)_.*\.csv$",
+            file_pattern_regex = r"^account-statement_\d{4}-\d{2}-\d{2}_(?P<date>\d{4}-\d{2}-\d{2})_(en(-gb)?)_.*\.csv$",
             file_date_format = "%Y-%m-%d",
             file_delimiter=",",
             file_header = ("Type", "Product", "Started Date", "Completed Date", "Description", "Amount", "Fee", "Currency", "State", "Balance"),

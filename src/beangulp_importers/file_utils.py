@@ -1,16 +1,22 @@
 import petl as etl
 from petl.util.base import DictsView
 from typing import Tuple, Iterable, Optional, Mapping
+import warnings
+
 
 def read_csv_table(filepath: str, header_rows: int = 0, footer_rows: int = 0, row: Optional[int] = None, delimiter: str = ",") -> DictsView:
     """
-    Read a CSV file, skipping a specified number of header and footer rows.
+    Reads a CSV file, skipping a specified number of header and footer rows.
 
-    :param filepath: Path to the CSV file.
-    :param header_rows: Number of rows to skip from the top (default is 0).
-    :param footer_rows: Number of rows to skip from the bottom (default is 0).
-    :param row: Optional row index to read (0-based). If None, returns the entire table after skipping.
-    :return: petl table with header and footer rows skipped, or a single row as a dictionary if row is specified.
+    Args:
+        filepath (str): Path to the CSV file.
+        header_rows (int): Number of rows to skip from the top. Default is 0.
+        footer_rows (int): Number of rows to skip from the bottom. Default is 0.
+        row (Optional[int]): Optional row index to read (0-based). If None, returns the entire table after skipping.
+        delimiter (str): Character that separates values in the CSV file. Default is ','.
+
+    Returns:
+        DictsView: A petl table with header and footer rows skipped, or a single row as a dictionary if `row` is specified.
     """
     # Load the CSV file
     table = etl.fromcsv(filepath, delimiter = delimiter)
@@ -30,13 +36,14 @@ def read_csv_table(filepath: str, header_rows: int = 0, footer_rows: int = 0, ro
 def read_csv_header(filepath: str, header_rows: int = 0, delimiter: str = ",") -> Tuple[str]:
     """
     Reads the header of a CSV file using petl, skipping the specified number of rows.
-    
+
     Args:
         filepath (str): The path to the CSV file.
         header_rows (int): The number of rows to skip before reading the header. Default is 0.
-    
+        delimiter (str): Character that separates values in the CSV file. Default is ','.
+
     Returns:
-        list: A list of strings representing the column headers.
+        Tuple[str]: A tuple of strings representing the column headers.
     """
     # Use petl to skip rows and retrieve the header
     table = etl.skip(etl.fromcsv(filepath, delimiter=delimiter), header_rows)
@@ -46,25 +53,56 @@ def read_csv_header(filepath: str, header_rows: int = 0, delimiter: str = ",") -
 
 
 def match_csv_header(filepath: str, header: Iterable[str], header_rows: int = 0, delimiter: str = ",") -> bool:
+    """
+    Compares the header of a CSV file with a given header.
+
+    Args:
+        filepath (str): The path to the CSV file.
+        header (Iterable[str]): The header to compare against.
+        header_rows (int): Number of rows to skip before reading the header. Default is 0.
+        delimiter (str): Character that separates values in the CSV file. Default is ','.
+
+    Returns:
+        bool: True if the headers match, False otherwise.
+    """
     target_header = read_csv_header(filepath, header_rows, delimiter=delimiter)
     return target_header == tuple(header)
 
 
 def match_csv_entry(filepath: str, entry_dict: Mapping[str, str], header_rows: int = 0, footer_rows: int = 0) -> bool:
-    target_dict = read_csv_table(filepath, header_rows, footer_rows, row=0)[0]
-    return all(item in target_dict.items() for item in entry_dict.items())
+    """
+    Checks if a given entry exists in the first row of a CSV file.
+
+    Args:
+        filepath (str): The path to the CSV file.
+        entry_dict (Mapping[str, str]): A dictionary representing the entry to match.
+        header_rows (int): Number of rows to skip from the top. Default is 0.
+        footer_rows (int): Number of rows to skip from the bottom. Default is 0.
+
+    Returns:
+        bool: True if the entry exists, False otherwise.
+    """
+    target_dict = read_csv_table(filepath, header_rows, footer_rows, row=0)
+
+    # Return false when there are no entries in the file.
+    if len(target_dict) == 0:
+        return False
+    return all(item in target_dict[0].items() for item in entry_dict.items())
 
 
 def read_xlsx_table(filepath: str, sheet_name: int = 0, header_rows: int = 0, footer_rows: int = 0, row: Optional[int] = None) -> DictsView:
     """
-    Read an Excel (.xlsx) file, skipping a specified number of header and footer rows,
-    and return the data as a list of dictionaries.
+    Reads an Excel (.xlsx) file, skipping a specified number of header and footer rows.
 
-    :param file_path: Path to the Excel file.
-    :param sheet_name: Name or index of the sheet to read (default is the first sheet).
-    :param header_rows: Number of rows to skip from the top (default is 1).
-    :param footer_rows: Number of rows to skip from the bottom (default is 1).
-    :return: List of dictionaries representing each row.
+    Args:
+        filepath (str): Path to the Excel file.
+        sheet_name (int): Name or index of the sheet to read. Default is the first sheet (0).
+        header_rows (int): Number of rows to skip from the top. Default is 0.
+        footer_rows (int): Number of rows to skip from the bottom. Default is 0.
+        row (Optional[int]): Optional row index to read (0-based). If None, returns the entire table after skipping.
+
+    Returns:
+        DictsView: A petl table with header and footer rows skipped, or a single row as a dictionary if `row` is specified.
     """
     # Load the Excel file
     table = etl.fromxlsx(filepath, sheet=sheet_name)
@@ -84,29 +122,61 @@ def read_xlsx_table(filepath: str, sheet_name: int = 0, header_rows: int = 0, fo
 
 def read_xlsx_header(filepath: str, sheet_name: int = 0, header_rows: int = 0) -> Tuple[str]:
     """
-    Reads the header of a Excel (.xlsx) file using petl, skipping the specified number of rows.
-    
+    Reads the header of an Excel (.xlsx) file using petl, skipping the specified number of rows.
+
     Args:
         filepath (str): The path to the Excel file.
+        sheet_name (int): Name or index of the sheet to read. Default is the first sheet (0).
         header_rows (int): The number of rows to skip before reading the header. Default is 0.
-    
+
     Returns:
-        list: A list of strings representing the column headers.
+        Tuple[str]: A tuple of strings representing the column headers.
     """
     # Use petl to skip rows and retrieve the header
     table = etl.skip(etl.fromxlsx(filepath, sheet=sheet_name), header_rows)
-    header = table.header()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)  # Catch warning about default stylesheet not being defined
+        header = table.header()
 
     return header
 
 
 def match_xlsx_header(filepath: str, header: Iterable[str], sheet_name = 0, header_rows: int = 0) -> bool:
+    """
+    Compares the header of an Excel file with a given header.
+
+    Args:
+        filepath (str): The path to the Excel file.
+        header (Iterable[str]): The header to compare against.
+        sheet_name (int): Name or index of the sheet to read. Default is the first sheet (0).
+        header_rows (int): Number of rows to skip before reading the header. Default is 0.
+
+    Returns:
+        bool: True if the headers match, False otherwise.
+    """
     target_header = read_xlsx_header(filepath, sheet_name, header_rows)
     return target_header == tuple(header)
 
 
 def match_xlsx_entry(filepath: str, entry_dict: Mapping[str, str], sheet_name: int = 0, header_rows: int = 0, footer_rows: int = 0) -> bool:
-    target_dict = read_xlsx_table(filepath, sheet_name, header_rows, footer_rows, row=0)[0]
+    """
+    Checks if a given entry exists in the first row of an Excel file.
+
+    Args:
+        filepath (str): The path to the Excel file.
+        entry_dict (Mapping[str, str]): A dictionary representing the entry to match.
+        sheet_name (int): Name or index of the sheet to read. Default is the first sheet (0).
+        header_rows (int): Number of rows to skip from the top. Default is 0.
+        footer_rows (int): Number of rows to skip from the bottom. Default is 0.
+
+    Returns:
+        bool: True if the entry exists, False otherwise.
+    """
+    target_dict = read_xlsx_table(filepath, sheet_name, header_rows, footer_rows, row=0)
+    
+    # Return false when there are no entries in the file.
+    if len(target_dict) == 0:
+        return False
     return all(item in target_dict.items() for item in entry_dict.items())
 
 

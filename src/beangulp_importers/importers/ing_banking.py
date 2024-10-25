@@ -21,7 +21,7 @@ class INGCurrentImporter(BankingImporter):
 
         file_description = file.FileDescriptionCSV(
             file_extension = ".csv",
-            file_pattern_regex = rf"^{root_account_id}_(?P<date>\d{{2}}-\d{{2}}-\d{{4}})_\d{{2}}-\d{{2}}-\d{{4}}\.csv$",
+            file_pattern_regex = rf"^{root_account_id}_\d{{2}}-\d{{2}}-\d{{4}}_(?P<date>\d{{2}}-\d{{2}}-\d{{4}})\.csv$",
             file_date_format = "%d-%m-%Y",
             file_delimiter = ";",
             file_header = ("Date", r"Name / Description", "Account", "Counterparty", "Code", r"Debit/credit", "Amount (EUR)", "Transaction type", "Notifications", "Resulting balance", "Tag"),

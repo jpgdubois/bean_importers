@@ -34,7 +34,14 @@ class ArgentaImporter(BankingImporter):
         get_transaction_type = transaction_type.FromTransactionType(
             transaction_type_key="Beschrijving",
             transaction_type_mapping={
-                TransactionType.transfer: ["Diverse verrichting", "Inkomende overschrijving", "Betaling bancontact", "Uitgaande overschrijving"],
+                TransactionType.transfer: [
+                    "Diverse verrichting",
+                    "Inkomende overschrijving",
+                    "Betaling Bancontact",
+                    "Betaling Maestro",
+                    "Uitgaande overschrijving",
+                    "Taks Portkost Interest",
+                ],
                 TransactionType.skip: [],
             },
         )

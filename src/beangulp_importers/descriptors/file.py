@@ -89,12 +89,29 @@ class FileDescriptionCSV:
         return extract_date_from_filename(filepath, self.file_pattern_regex, self.file_date_format)
     
     def name(self, filepath: str) -> str:
-        # Remove special characters and replace spaces with underscores
-        filename = os.path.basename(filepath)
+        """
+        Normalise the filename by removing special characters and replacing spaces with underscores.
+
+        Args:
+            filepath (str): The path to the file.
+
+        Returns:
+            str: The normalised filename.
+        """
+        filename = os.path.basename(filepath).lower()
         filename = re.sub(r'[^a-zA-Z0-9\.]', '_', filename)
         return filename
     
     def read(self, filepath: str) -> DictsView:
+        """
+        Read the content of the CSV file and return it as a petl DictsView.
+
+        Args:
+            filepath (str): The path to the CSV file.
+
+        Returns:
+            DictsView: A view of the file content as a dictionary.
+        """
         return read_csv_table(filepath, delimiter = self.file_delimiter)
 
 
@@ -175,10 +192,27 @@ class FileDescriptionXLSX:
         return extract_date_from_filename(filepath, self.file_pattern_regex, self.file_date_format)
     
     def name(self, filepath: str) -> str:
-        # Remove special characters and replace spaces with underscores
+        """
+        Normalise the filename by removing special characters and replacing spaces with underscores.
+
+        Args:
+            filepath (str): The path to the file.
+
+        Returns:
+            str: The normalised filename.
+        """
         filename = os.path.basename(filepath)
         filename = re.sub(r'[^a-zA-Z0-9\.]', '_', filename)
         return filename
     
     def read(self, filepath: str) -> DictsView:
+        """
+        Read the content of the XLSX file and return it as a petl DictsView.
+
+        Args:
+            filepath (str): The path to the XLSX file.
+
+        Returns:
+            DictsView: A view of the file content as a dictionary.
+        """
         return read_xlsx_table(filepath)

@@ -20,7 +20,20 @@ from beangulp_importers.descriptors.protocols import (
 
 @dataclass(kw_only=True, frozen=True)
 class BankingImporter(beangulp.Importer):
+    """
+    A banking importer that extracts transactions from CSV files and converts them into Beancount entries.
 
+    Attributes:
+        root_account (str): The main account to which transactions will be posted.
+        fee_account (Optional[str]): An optional account for transaction fees.
+        get_date (DateIdentifier): Function to extract the transaction date.
+        get_payee_narration (PayeeNarrationIdentifier): Function to extract payee and narration.
+        get_transaction_type (TransactionTypeIdentifier): Function to identify the type of transaction.
+        get_root_amount (AmountIdentifier): Function to extract the main transaction amount.
+        get_fee_amount (Optional[AmountIdentifier]): Function to extract the fee amount.
+        get_balance (Optional[AmountIdentifier]): Function to extract the account balance.
+        file_description (FileDescription): Descriptor for file validation and reading.
+    """
     root_account: str
     fee_account: Optional[str] = None
     get_date: DateIdentifier
@@ -32,15 +45,51 @@ class BankingImporter(beangulp.Importer):
     file_description: FileDescription
 
     def identify(self, filepath: str) -> bool:
+        """
+        Identify if the provided file matches the expected format.
+
+        Args:
+            filepath (str): The path to the file to be identified.
+
+        Returns:
+            bool: True if the file matches the criteria; False otherwise.
+        """
         return self.file_description.identify(filepath)
     
     def filename(self, filepath: str) -> str | None:
+        """
+        Get the normalised filename from the provided file path.
+
+        Args:
+            filepath (str): The path to the file.
+
+        Returns:
+            Optional[str]: The normalised filename or None if it cannot be determined.
+        """
         return self.file_description.name(filepath)
     
     def date(self, filepath: str) -> datetime.date:
+        """
+        Extract the date from the filename using the configured regex pattern.
+
+        Args:
+            filepath (str): The file path from which to extract the date.
+
+        Returns:
+            datetime.date: The extracted date from the filename.
+        """
         return self.file_description.date(filepath)
     
     def account(self, filepath: str) -> str:
+        """
+        Get the root account associated with the file.
+
+        Args:
+            filepath (str): The path to the file.
+
+        Returns:
+            str: The root account name.
+        """
         return self.root_account
     
     def extract(self, filepath: str, existing: List[NamedTuple]) -> List[NamedTuple]:
@@ -49,12 +98,15 @@ class BankingImporter(beangulp.Importer):
 
         Args:
             filepath (str): The file path of the CSV file.
-            existing (List[data.Entry]): A list of existing Beancount entries.
+            existing (List[NamedTuple]): A list of existing Beancount entries.
 
         Returns:
             List[data.Entry]: A list of extracted Beancount entries.
+
+        Raises:
+            ValueError: If the date cannot be extracted from a row.
         """
-        entries = []    # List with the newly generated transactions
+        entries = []  # List with the newly generated transactions
         balances = defaultdict(list)  # Dictionary with latest balance for each currency
         default_account = self.account(filepath)
 
@@ -111,7 +163,7 @@ class BankingImporter(beangulp.Importer):
 
         # Append balances.
         for currency, balances in balances.items():
-            # Assume last balance is the latest one
+            # Assume last balance is the latest one TODO: Sort by transaction date
             entries.append(balances[-1])
 
         return entries

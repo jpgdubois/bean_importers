@@ -2,8 +2,20 @@ from enum import Enum
 
 class Currency(Enum):
     """
-    An Enum representing various currencies, where each currency is defined
-    by its official ISO code.
+    An enumeration representing various currencies, defined by their official ISO codes.
+
+    Attributes:
+        CHF (str): Swiss Franc.
+        EUR (str): Euro.
+        SEK (str): Swedish Krona.
+        USD (str): US Dollar.
+        GBP (str): British Pound.
+        JPY (str): Japanese Yen (commented out).
+        AUD (str): Australian Dollar (commented out).
+        CAD (str): Canadian Dollar (commented out).
+        NZD (str): New Zealand Dollar (commented out).
+        BTC (str): Bitcoin (commented out).
+        ETH (str): Ethereum (commented out).
     """
     CHF = "CHF"  # Swiss Franc
     EUR = "EUR"  # Euro
@@ -20,12 +32,13 @@ class Currency(Enum):
 
 class TransactionType(Enum):
     """
-    Enum representing different types of transactions.
+    An enumeration representing different types of transactions.
 
     Attributes:
-        transfer: A transfer transaction.
-        exchange: An exchange transaction.
+        transfer (str): A transfer transaction.
+        exchange (str): An exchange transaction.
+        skip (str): A transaction to skip.
     """
-    transfer = "transfer"
-    exchange = "exchange"
-    skip = "skip"
+    transfer = "transfer"  # A transfer transaction
+    exchange = "exchange"  # An exchange transaction
+    skip = "skip"          # A transaction to skip
