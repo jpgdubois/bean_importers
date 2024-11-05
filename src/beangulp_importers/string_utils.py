@@ -263,4 +263,4 @@ def reduce_whitespace(text: str) -> str:
     Returns:
         str: The processed string with reduced whitespace.
     """
-    return re.sub
+    return re.sub(r'\s+', ' ', text).strip()
